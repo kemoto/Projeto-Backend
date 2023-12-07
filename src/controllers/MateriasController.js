@@ -1,60 +1,59 @@
-const prisma = require("../database");
+const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
 
 class MateriasController {
   async create(req, res) {
-    const { nome } = req.body;
+    const { nome, escolaId } = req.body;
 
     if (!nome) {
       throw new AppError("Nome não definido.");
     }
 
-    const materia = await prisma.materia.create({ data: { nome } });
-
-    res.status(201).json(materia);
+    await knex("materias").insert({ nome, escolaId });
+    res.status(201).json();
   }
 
-  async index(req, res) {
-    const materias = await prisma.materia.findMany();
+  // async index(req, res) {
+  //   const materias = await prisma.materia.findMany();
 
-    if (!materias) {
-      throw new AppError("Nenhum registro encontrado.");
-    }
+  //   if (!materias) {
+  //     throw new AppError("Nenhum registro encontrado.");
+  //   }
 
-    res.status(200).json(materias);
-  }
+  //   res.status(200).json(materias);
+  // }
 
-  async update(req, res) {
-    const { id } = req.params;
-    const { nome } = req.body;
+  // async update(req, res) {
+  //   const { id } = req.params;
+  //   const { nome } = req.body;
 
-    if (!id) {
-      throw new AppError("É necessário passar o id do item que será alterado.");
-    }
+  //   if (!id) {
+  //     throw new AppError("É necessário passar o id do item que será alterado.");
+  //   }
 
-    if (!nome) {
-      throw new AppError("É necessário passar o novo nome do item.");
-    }
+  //   if (!nome) {
+  //     throw new AppError("É necessário passar o novo nome do item.");
+  //   }
 
-    const materia = await prisma.materia.update({
-      where: { id: parseInt(id) },
-      data: { nome },
-    });
+  //   const materia = await prisma.materia.update({
+  //     where: { id: parseInt(id) },
+  //     data: { nome },
+  //   });
 
-    res.status(200).json(materia);
-  }
+  //   res.status(200).json(materia);
+  // }
 
-  async delete(req, res) {
-    const { id } = req.params;
+  // async delete(req, res) {
+  //   const { id } = req.params;
 
-    if (!id) {
-      throw new AppError("É necessário passar o id do item que será excluído.");
-    }
+  //   if (!id) {
+  //     throw new AppError("É necessário passar o id do item que será excluído.");
+  //   }
 
-    await prisma.materia.delete({ where: { id: parseInt(id) } });
+  //   await prisma.materia.delete({ where: { id: parseInt(id) } });
 
-    res.status(200).json({ message: "Matéria excluída com sucesso." });
-  }
+  //   res.status(200).json({ message: "Matéria excluída com sucesso." });
+  // }
 }
 
 module.exports = MateriasController;

@@ -1,59 +1,58 @@
-const prisma = require("../database");
+const knex = require("../database/knex");
+const AppError = require("../utils/AppError");
 
 class EscolasController {
   async create(req, res) {
-    const { nome, endereco, contato } = req.body;
+    const { nome, contato } = req.body;
 
-    if (!nome || !endereco || !contato) {
+    if (!nome || !contato) {
       throw new AppError(
         "Todos os campos são necessários para completar o cadastro."
       );
     }
 
-    const escola = await prisma.escola.create({
-      data: { nome, endereco, contato },
-    });
+    await knex("escolas").insert({ nome, contato })
 
-    res.status(201).json(escola);
+    res.status(201).json();
   }
 
-  async index(req, res) {
-    const escolas = await prisma.escola.findMany();
+  // async index(req, res) {
+  //   const escolas = await prisma.escola.findMany();
 
-    if (!escolas) {
-      throw new AppError("Nenhum registro foi encontrado.");
-    }
+  //   if (!escolas) {
+  //     throw new AppError("Nenhum registro foi encontrado.");
+  //   }
 
-    res.status(200).json(escolas);
-  }
+  //   res.status(200).json(escolas);
+  // }
 
-  async update(req, res) {
-    const { id } = req.params;
-    const { nome, endereco, contato } = req.body;
+  // async update(req, res) {
+  //   const { id } = req.params;
+  //   const { nome, endereco, contato } = req.body;
 
-    if (!id) {
-      throw new AppError("É necessário passar o id do item que será alterado.");
-    }
+  //   if (!id) {
+  //     throw new AppError("É necessário passar o id do item que será alterado.");
+  //   }
 
-    const escola = await prisma.escola.update({
-      where: { id: parseInt(id) },
-      data: { nome, endereco, contato },
-    });
+  //   const escola = await prisma.escola.update({
+  //     where: { id: parseInt(id) },
+  //     data: { nome, endereco, contato },
+  //   });
 
-    res.status(200).json(escola);
-  }
+  //   res.status(200).json(escola);
+  // }
 
-  async delete(req, res) {
-    const { id } = req.params;
+  // async delete(req, res) {
+  //   const { id } = req.params;
 
-    if (!id) {
-      throw new AppError("É necessário passar o id do item que será excluído.");
-    }
+  //   if (!id) {
+  //     throw new AppError("É necessário passar o id do item que será excluído.");
+  //   }
 
-    await prisma.escola.delete({ where: { id: parseInt(id) } });
+  //   await prisma.escola.delete({ where: { id: parseInt(id) } });
     
-    res.status(200).json({ message: "Escola excluída com sucesso." });
-  }
+  //   res.status(200).json({ message: "Escola excluída com sucesso." });
+  // }
 }
 
 module.exports = EscolasController;

@@ -1,8 +1,9 @@
-const prisma = require("../database");
+const knex = require("../database/knex");
+const AppError = require("../utils/AppError");
 
 class AlunosController {
   async create(req, res) {
-    const { nome, escolaId } = req.body;
+    const { nome, escolaId, turmaId } = req.body;
 
     if (!nome) {
       throw new AppError("É preciso informar o nome do aluno.");
@@ -14,54 +15,58 @@ class AlunosController {
       );
     }
 
-    const aluno = await prisma.aluno.create({
-      data: { nome, escolaId },
-    });
-
-    res.status(201).json(aluno);
-  }
-
-  async index(req, res) {
-    const alunos = await prisma.aluno.findMany();
-
-    if (!alunos) {
-      throw new AppError("Nenhum registro encontrado.");
+    if(!turmaId) {
+      throw new AppError(
+        "É preciso informar o id da turma onde o aluno será cadastrado."
+      )
     }
 
-    res.status(200).json(alunos);
+    await knex("alunos").insert({ nome, escolaId, turmaId });
+
+    res.status(201).json();
   }
 
-  async update(req, res) {
-    const { id } = req.params;
-    const { nome } = req.body;
+//   async index(req, res) {
+//     const alunos = await prisma.aluno.findMany();
 
-    if (!id) {
-      throw new AppError("É necessário passar o id do item que será alterado.");
-    }
+//     if (!alunos) {
+//       throw new AppError("Nenhum registro encontrado.");
+//     }
 
-    if (!nome) {
-      throw new AppError("É necessário passar o novo nome do item.");
-    }
+//     res.status(200).json(alunos);
+//   }
 
-    const aluno = await prisma.aluno.update({
-      where: { id: parseInt(id) },
-      data: { nome },
-    });
+//   async update(req, res) {
+//     const { id } = req.params;
+//     const { nome } = req.body;
 
-    res.status(200).json(aluno);
-  }
+//     if (!id) {
+//       throw new AppError("É necessário passar o id do item que será alterado.");
+//     }
 
-  async delete(req, res) {
-    const { id } = req.params;
+//     if (!nome) {
+//       throw new AppError("É necessário passar o novo nome do item.");
+//     }
 
-    if (!id) {
-      throw new AppError("É necessário passar o id do item que será excluído.");
-    }
+//     const aluno = await prisma.aluno.update({
+//       where: { id: parseInt(id) },
+//       data: { nome },
+//     });
 
-    await prisma.aluno.delete({ where: { id: parseInt(id) } });
+//     res.status(200).json(aluno);
+//   }
 
-    res.status(200).json({ message: "Aluno excluído com sucesso." });
-  }
+//   async delete(req, res) {
+//     const { id } = req.params;
+
+//     if (!id) {
+//       throw new AppError("É necessário passar o id do item que será excluído.");
+//     }
+
+//     await prisma.aluno.delete({ where: { id: parseInt(id) } });
+
+//     res.status(200).json({ message: "Aluno excluído com sucesso." });
+//   }
 }
 
 module.exports = AlunosController;
