@@ -157,4 +157,5 @@ const mediasNoIntervalo = calcularMediasPorIntervaloAPI(
 );
 
 // Exiba as médias calculadas no intervalo
-console.log(mediasNoIntervalo);
+
+//console.log(mediasNoIntervalo);

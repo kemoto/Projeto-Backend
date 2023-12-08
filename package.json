@@ -97,6 +97,7 @@
     "is-lambda": "^1.0.1",
     "is-number": "^7.0.0",
     "isexe": "^2.0.0",
+    "jsonwebtoken": "^9.0.2",
     "knex": "^3.0.1",
     "lodash": "^4.17.21",
     "lru-cache": "^6.0.0",
@@ -175,6 +176,8 @@
     "strip-ansi": "^6.0.1",
     "supports-color": "^5.5.0",
     "supports-preserve-symlinks-flag": "^1.0.0",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.0",
     "tar": "^6.2.0",
     "tarn": "^3.0.2",
     "tildify": "^2.0.0",
@@ -198,7 +201,8 @@
     "yallist": "^4.0.0"
   },
   "scripts": {
-    "start": "nodemon ./src/server.js"
+    "start": "nodemon ./src/server.js",
+    "swagger-autogen": "node swagger.js"
   },
   "author": "",
   "license": "ISC"
