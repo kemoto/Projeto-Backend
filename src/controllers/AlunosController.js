@@ -1,72 +1,88 @@
-const knex = require("../database/knex");
+const {
+  AlunosModel,
+  NotasModel,
+  MateriasModel,
+} = require("../database/sequelize");
 const AppError = require("../utils/AppError");
 
 class AlunosController {
   async create(req, res) {
     const { nome, escolaId, turmaId } = req.body;
 
-    if (!nome) {
-      throw new AppError("É preciso informar o nome do aluno.");
+    if (!nome || !escolaId || !turmaId) {
+      throw new AppError("Todos os campos devem estar preenchidos.");
     }
 
-    if (!escolaId) {
-      throw new AppError(
-        "É preciso informar o id da escola onde o aluno será cadastrado."
-      );
-    }
+    await AlunosModel.create({ nome, escolaId, turmaId });
 
-    if(!turmaId) {
-      throw new AppError(
-        "É preciso informar o id da turma onde o aluno será cadastrado."
-      )
-    }
-
-    await knex("alunos").insert({ nome, escolaId, turmaId });
-
-    res.status(201).json();
+    res.json("Aluno criado com suceso!");
   }
 
-//   async index(req, res) {
-//     const alunos = await prisma.aluno.findMany();
+  async show(req, res) {
+    const { alunoId } = req.params;
 
-//     if (!alunos) {
-//       throw new AppError("Nenhum registro encontrado.");
-//     }
+    if (!alunoId) {
+      throw new AppError("Aluno não encontrado.");
+    }
 
-//     res.status(200).json(alunos);
-//   }
+    const alunoComMaterias = await AlunosModel.findAll({
+      where: { id: alunoId },
+      include: [
+        {
+          model: NotasModel,
+          attributes: [],
+          include: [
+            {
+              model: MateriasModel,
+              attributes: ["nome"],
+            },
+          ],
+        },
+      ],
+    });
 
-//   async update(req, res) {
-//     const { id } = req.params;
-//     const { nome } = req.body;
+    res.json(alunoComMaterias);
+  }
 
-//     if (!id) {
-//       throw new AppError("É necessário passar o id do item que será alterado.");
-//     }
+  async index(req, res) {
+    const alunos = await AlunosModel.findAll();
 
-//     if (!nome) {
-//       throw new AppError("É necessário passar o novo nome do item.");
-//     }
+    res.json(alunos);
+  }
 
-//     const aluno = await prisma.aluno.update({
-//       where: { id: parseInt(id) },
-//       data: { nome },
-//     });
+  async update(req, res) {
+    const { alunoId } = req.params;
+    const { nome, escolaId, turmaId } = req.body;
 
-//     res.status(200).json(aluno);
-//   }
+    if (!nome || !escolaId || !turmaId) {
+      throw new AppError("Todos os campos devem estar preenchidos.");
+    }
 
-//   async delete(req, res) {
-//     const { id } = req.params;
+    await AlunosModel.update(
+      {
+        nome,
+        escolaId,
+        turmaId,
+      },
+      {
+        where: {
+          id: alunoId,
+        },
+      }
+    );
 
-//     if (!id) {
-//       throw new AppError("É necessário passar o id do item que será excluído.");
-//     }
+    res.json("Aluno atualizado com sucesso!");
+  }
 
-//     await prisma.aluno.delete({ where: { id: parseInt(id) } });
+  async delete(req, res) {
+    const { alunoId } = req.params;
 
-//     res.status(200).json({ message: "Aluno excluído com sucesso." });
-//   }
+    await AlunosModel.destroy({
+      where: { id: alunoId },
+    });
+
+    res.json("Aluno excluido com sucesso!");
+  }
 }
 
 module.exports = AlunosController;

@@ -6,8 +6,9 @@ const escolasController = new EscolasController;
 const escolasRouter = Router();
 
 escolasRouter.post('/', escolasController.create);
-// escolasRouter.get('/', escolasController.index);
-// escolasRouter.put('/:id', escolasController.update);
-// escolasRouter.delete('/:id', escolasController.delete);
+escolasRouter.get('/:escolaId', escolasController.show);
+escolasRouter.get('/', escolasController.index);
+escolasRouter.put('/:escolaId', escolasController.update);
+escolasRouter.delete('/:escolaId', escolasController.delete);
 
 module.exports = escolasRouter;

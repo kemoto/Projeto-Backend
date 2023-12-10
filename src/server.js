@@ -2,10 +2,10 @@ require("express-async-errors");
 const express = require("express");
 const AppError = require("./utils/AppError");
 const routes = require("./routes");
-const LoginRouter = require("./routes/loginRoutes");
-const adminRoutes = require('./routes/admRoutes');
+const LoginRouter = require("./routes/login.routes");
+const adminRoutes = require("./routes/adm.routes");
 const Auth = require("./utils/Auth");
-const userRoutes = require('./routes/userRoutes');
+const userRoutes = require("./routes/user.routes");
 
 const app = express();
 app.use(express.json());
@@ -38,7 +38,7 @@ app.use((error, req, res, next) => {
 
 // Rotas
 app.use("/", LoginRouter);
-app.use('/users', userRoutes);
+app.use("/users", userRoutes);
 app.use("/admin", adminRoutes);
 
 const PORT = 3000;

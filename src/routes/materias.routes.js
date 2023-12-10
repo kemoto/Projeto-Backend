@@ -6,8 +6,8 @@ const materiasController = new MateriasController;
 const materiasRouter = Router();
 
 materiasRouter.post('/', materiasController.create);
-// materiasRouter.get('/', materiasController.index);
-// materiasRouter.put('/:id', materiasController.update);
-// materiasRouter.delete('/:id', materiasController.delete);
+materiasRouter.get('/', materiasController.index);
+materiasRouter.put('/:materiaId', materiasController.update);
+materiasRouter.delete('/:materiaId', materiasController.delete);
 
 module.exports = materiasRouter;

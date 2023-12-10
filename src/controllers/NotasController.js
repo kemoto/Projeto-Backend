@@ -1,70 +1,76 @@
-const knex = require("../database/knex");
+const sequelize = require("../database/sequelize");
+const { NotasModel, AlunosModel } = require("../database/sequelize");
 const AppError = require("../utils/AppError");
 
 class NotasController {
   async create(req, res) {
-    const { nota, materiaId, alunoId } = req.body;
+    const { nota, bimestre, materiaId, alunoId } = req.body;
 
-    if (!nota) {
-      throw new AppError("É preciso informar a nota.");
+    if (!nome || !bimestre || !materiaId || !alunoId) {
+      throw new AppError("Todos os campos devem estar preenchidos.");
     }
 
-    if (!materiaId) {
-      throw new AppError("É preciso informar o bimestre da nota.");
+    const verificaNota = await NotasModel.findOne({
+      where: {
+        bimestre,
+        materiaId,
+        alunoId,
+      },
+    });
+
+    if (verificaNota) {
+      throw new AppError("Nota já cadastrada para esse bimestre.");
     }
 
-    if (!alunoId) {
-      throw new AppError(
-        "É preciso informar o id do aluno onde a nota será cadastrada."
-      );
-    }
+    await NotasModel.create({
+      nota,
+      bimestre,
+      materiaId,
+      alunoId,
+    });
 
-    await knex("notas").insert({ nota, materiaId, alunoId });
-
-    res.status(201).json();
+    res.json("Nota cadastrada com sucesso!");
   }
 
-  // async index(req, res) {
-  //   const notas = await prisma.nota.findMany();
+  async index(req, res) {
+    const { alunoId } = req.params;
 
-  //   if (!alunos) {
-  //     throw new AppError("Nenhum registro encontrado.");
-  //   }
+    const notasAluno = await NotasModel.findAll({
+      where: {
+        alunoId,
+      },
+    });
 
-  //   res.status(200).json(notas);
-  // }
+    res.json(notasAluno);
+  }
 
-  // async update(req, res) {
-  //   const { id } = req.params;
-  //   const { valor } = req.body;
+  async update(req, res) {
+    const { notaId } = req.params;
+    const { nota, materiaId, alunoId } = req.body;
 
-  //   if (!id) {
-  //     throw new AppError("É necessário passar o id do item que será alterado.");
-  //   }
+    await NotasModel.update(
+      {
+        nota,
+        materiaId,
+        alunoId,
+      },
+      {
+        where: { id: notaId },
+      }
+    );
 
-  //   if (!valor) {
-  //     throw new AppError("É necessário passar o novo valor do item.");
-  //   }
+    res.json("Nota atualizada com sucesso!");
+  }
 
-  //   const nota = await prisma.nota.update({
-  //     where: { id: parseInt(id) },
-  //     data: { valor },
-  //   });
+  async delete(req, res) {
+    const { notaId } = req.params;
 
-  //   res.status(200).json(nota);
-  // }
+    await NotasModel.destroy({
+      where: { id: notaId },
+    });
 
-  // async delete(req, res) {
-  //   const { id } = req.params;
-
-  //   if (!id) {
-  //     throw new AppError("É necessário passar o id do item que será excluído.");
-  //   }
-
-  //   await prisma.nota.delete({ where: { id: parseInt(id) } });
-
-  //   res.status(200).json({ message: "Nota excluída com sucesso." });
-  // }
+    res.json("Nota excluida com sucesso!");
+  }
 }
 
 module.exports = NotasController;

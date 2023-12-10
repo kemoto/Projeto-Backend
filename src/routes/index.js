@@ -1,11 +1,12 @@
 const { Router } = require("express");
 
-const alunosRouter = require("../routes/alunosRoutes.routes");
-const escolasRouter = require("../routes/escolasRoutes.routes");
-const materiasRouter = require("../routes/materiasRoutes.routes");
-const notasRouter = require("../routes/notasRoutes.routes");
-const turmasRouter = require("../routes/turmasRoutes.routes");
-const relatoriosRouter = require("../routes/relatoriosRoutes.routes");
+const alunosRouter = require("./alunos.routes");
+const escolasRouter = require("./escolas.routes");
+const materiasRouter = require("./materias.routes");
+const notasRouter = require("./notas.routes");
+const turmasRouter = require("./turmas.routes");
+const relatoriosRouter = require("./relatorios.routes");
+const installBD = require("../routes/installBD.routes");
 
 const routes = Router()
 
@@ -15,5 +16,6 @@ routes.use("/materias", materiasRouter);
 routes.use("/notas", notasRouter);
 routes.use("/turmas", turmasRouter);
 routes.use("/relatorios", relatoriosRouter);
+routes.use("/install", installBD);
 
 module.exports = routes;

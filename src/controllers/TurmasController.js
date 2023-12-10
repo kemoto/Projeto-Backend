@@ -1,68 +1,54 @@
-const knex = require("../database/knex");
+const { TurmasModel } = require("../database/sequelize");
 const AppError = require("../utils/AppError");
 
 class TurmasController {
   async create(req, res) {
     const { nome, ano, escolaId } = req.body;
 
-    if (!nome || !ano) {
-      throw new AppError(
-        "Todos os campos são necessários para completar o cadastro."
-      );
+    if (!nome || !ano || !escolaId ) {
+      throw new AppError("Todos os campos devem estar preenchidos.");
     }
 
-    if (!escolaId) {
-      throw new AppError(
-        "É preciso informar o id da escola a qual a turma será vinculada."
-      );
-    }
+    await TurmasModel.create({
+      nome,
+      ano,
+      escolaId,
+    })
 
-    await knex("turmas").insert({ nome, ano, escolaId });
-
-    res.status(201).json();
+    res.json("Turma criada com sucesso!");
   }
 
-  // async index(req, res) {
-  //   const turmas = await prisma.turma.findMany();
+  async index(req, res) {
+    const turmas = await TurmasModel.findAll()
 
-  //   if (!turmas) {
-  //     throw new AppError("Nenhum registro de turmas encontrado.");
-  //   }
+    res.json(turmas);
+  }
 
-  //   res.status(200).json(turmas);
-  // }
+  async update(req, res) {
+    const { turmaId } = req.params;
+    const { nome, ano, escolaId } = req.body;
 
-  // async update(req, res) {
-  //   const { id } = req.params;
-  //   const { materiaId, ano } = req.body;
+    await TurmasModel.update({
+      nome,
+      ano,
+      escolaId,
+    },
+    {
+      where: { id: turmaId },
+    })
 
-  //   if (!id) {
-  //     throw new AppError("É necessário passar o id do item que será alterado.");
-  //   }
+    res.json("Turma atualizada com sucesso!");
+  }
 
-  //   if (!materiaId) {
-  //     throw new AppError("É necessário passar o ano da turma atualizado");
-  //   }
+  async delete(req, res) {
+    const { alunoId } = req.params;
 
-  //   const turma = await prisma.turma.update({
-  //     where: { id: parseInt(id) },
-  //     data: { materiaId, ano },
-  //   });
+    await AlunosModel.destroy({
+      where: { id: alunoId },
+    });
 
-  //   res.status(200).json(turma);
-  // }
-
-  // async delete(req, res) {
-  //   const { id } = req.params;
-
-  //   if (!id) {
-  //     throw new AppError("É necessário passar o id do item que será excluído.");
-  //   }
-
-  //   await prisma.turma.delete({ where: { id: parseInt(id) } });
-
-  //   res.status(200).json({ message: "Turma excluída com sucesso." });
-  // }
+    res.json("Aluno excluido com sucesso!");
+  }
 }
 
 module.exports = TurmasController;

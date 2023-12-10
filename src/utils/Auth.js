@@ -1,17 +1,18 @@
 const jwt = require("jsonwebtoken");
-const knex = require("../database/knex");
+const { UsersModel } = require("../database/sequelize");
 
 async function criarAdministradorPadrao() {
-  const usuarioExistente = await knex("usuarios").where({ usuario: "admin" }).first();
+  const usuarioExistente = await UsersModel.findOne({
+    where: { usuario: "admin" },
+  });
 
   if (!usuarioExistente) {
-    const usuarioAdmin = {
+    await UsersModel.create({
       usuario: "admin",
       senha: "senhaAdmin",
       isAdmin: true,
-    };
-
-    await knex("usuarios").insert(usuarioAdmin);
+    });
+    
     console.log("Administrador padrão criado com sucesso.");
   } else {
     console.log("Administrador padrão já existe.");
@@ -51,7 +52,9 @@ function validaAcesso(req, res, next) {
       });
   } catch (error) {
     console.error("Erro ao validar o acesso:", error);
-    res.status(error.status || 500).json({ mensagem: error.message || "Erro interno do servidor." });
+    res
+      .status(error.status || 500)
+      .json({ mensagem: error.message || "Erro interno do servidor." });
   }
 }
 
