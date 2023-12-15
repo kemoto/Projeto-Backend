@@ -11,12 +11,12 @@ const app = express();
 app.use(express.json());
 
 // Middleware para criar administrador padrão
-Auth.criarAdministradorPadrao()
-  .then(() => {})
-  .catch((error) => {
-    console.error("Erro ao criar administrador padrão:", error);
-    process.exit(1);
-  });
+// Auth.criarAdministradorPadrao()
+//   .then(() => {})
+//   .catch((error) => {
+//     console.error("Erro ao criar administrador padrão:", error);
+//     process.exit(1);
+//   });
 
 app.use(routes);
 
@@ -37,9 +37,9 @@ app.use((error, req, res, next) => {
 });
 
 // Rotas
-app.use("/", LoginRouter);
-app.use("/users", userRoutes);
-app.use("/admin", adminRoutes);
+// app.use("/", LoginRouter);
+// app.use("/users", userRoutes);
+// app.use("/admin", adminRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
