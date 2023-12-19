@@ -169,7 +169,7 @@ const novasNotas = [
   },
 ];
 
-installBD.get("/", async (req, res) => {
+installBD.get("/install", async (req, res) => {
   await sequelize.sync({ force: true });
 
   await UsersModel.bulkCreate(novosUsuarios);

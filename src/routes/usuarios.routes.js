@@ -7,7 +7,7 @@ const userRouter = Router();
 
 userRouter.post("/createUser", userController.create);
 userRouter.post("/login", userController.login);
-userRouter.put("/", userController.alteraSenha);
+userRouter.put("/updatePassword", userController.alteraSenha);
 
 
 module.exports = userRouter;

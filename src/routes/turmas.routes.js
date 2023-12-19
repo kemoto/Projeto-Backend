@@ -5,9 +5,9 @@ const turmasController = new TurmasController;
 
 const turmasRouter = Router();
 
-turmasRouter.post('/', turmasController.create);
-// turmasRouter.get('/', turmasController.index);
-// turmasRouter.put('/:id', turmasController.update);
-// turmasRouter.delete('/:id', turmasController.delete);
+turmasRouter.post('/createTurma', turmasController.create);
+turmasRouter.get('/listTurma', turmasController.index);
+turmasRouter.put('/updateTurma/:id', turmasController.update);
+turmasRouter.delete('/deleteTurma/:id', turmasController.delete);
 
 module.exports = turmasRouter;
