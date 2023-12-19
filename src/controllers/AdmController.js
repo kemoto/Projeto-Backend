@@ -1,82 +1,73 @@
-const { UsersModel } = require("../database/sequelize");
 const AppError = require("../utils/AppError");
+const { UsersModel } = require("../database/sequelize");
+const { hash, compare } = require("bcryptjs");
 
 class AdmController {
-  async criarAdministrador(req, res) {
+  async createAdmin(req, res) {
+    const { usuario, senha, isAdmin = true } = req.body;
+
+    if (!usuario || !senha) {
+      throw new AppError("Todos os campos precisam ser preenchidos.");
+    }
+
+    const verificarUsuario = await UsersModel.findOne({ where: { usuario } });
+
+    if (verificarUsuario) {
+      throw new AppError("Usuário já cadastrado");
+    }
+
+    const hashedSenha = await hash(senha, 8);
+
     try {
-      // Verifique se o usuário atual tem permissão de administrador
-      const { isAdmin } = req.usuarioAutenticado;
-      if (!isAdmin) {
-        throw new AppError(
-          "Apenas administradores podem criar outros administradores.",
-          403
-        );
-      }
-
-      // Lógica para criar um novo administrador
-      const { usuario, senha } = req.body;
-      // Certifique-se de adicionar lógica para verificar se o usuário já existe, gerar senha segura, etc.
-
       await UsersModel.create({
         usuario,
-        senha,
-        isAdmin: true,
+        senha: hashedSenha,
+        isAdmin,
       });
 
-      res.status(201).json({ mensagem: "Administrador criado com sucesso." });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(error.status || 500)
-        .json({ mensagem: error.message || "Erro interno do servidor." });
+      res.json("Usuário criado com sucesso.");
+    } catch (e) {
+      console.log(e);
+
+      res.json("Ocorreu um erro durante a criação do usuário.");
     }
   }
 
-  async excluirUsuario(req, res) {
-    try {
-      const { id } = req.params;
+  async deleteUser(req, res) {
+    const { usuario } = req.body;
 
-      // Exclui o usuário pelo ID
-      const deletedRows = await UsersModel.destroy({
-        where: { id },
-      });
-
-      if (deletedRows === 0) {
-        throw new AppError("Usuário não encontrado.", 404);
-      }
-
-      res.json({ mensagem: "Usuário excluído com sucesso." });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(error.status || 500)
-        .json({ mensagem: error.message || "Erro interno do servidor." });
+    if (!usuario) {
+      throw new AppError("É preciso informar o usuario.");
     }
+
+    const verificaUsuario = await UsersModel.findOne({ where: { usuario } });
+
+    if (!verificaUsuario) {
+      throw new AppError("Usuário não encontrado.");
+    }
+
+    if (verificaUsuario.isAdmin) {
+      throw new AppError("Não é possível excluir um admin.");
+    }
+
+    await UsersModel.destroy({ where: { usuario } });
+
+    res.json("Usuário deletado com sucesso.");
   }
 
-  async alterarUsuario(req, res) {
-    try {
-      const { id } = req.params;
-      const { usuario, senha, isAdmin } = req.body;
+  async alteraSenha(req, res) {
+    const { usuario, senha, novaSenha } = req.body;
 
-      // Atualiza o usuário pelo ID
-      const updatedRows = await UsersModel.update(
-        { usuario, senha, isAdmin },
-        { where: { id } }
-      );
+    const user = await UsersModel.findOne({where:{ usuario}});
 
-      if (updatedRows === 0) {
-        throw new AppError("Usuário não encontrado.", 404);
-      }
+    const validaSenha = compare(senha, user.senha);
 
-      res.json({ mensagem: "Usuário alterado com sucesso." });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(error.status || 500)
-        .json({ mensagem: error.message || "Erro interno do servidor." });
-    }
+    // if()
+
+    UsersModel.update()
+
+    res.json();
   }
 }
 
-module.exports = new AdmController();
+module.exports = AdmController;

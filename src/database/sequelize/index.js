@@ -1,9 +1,10 @@
 require("dotenv").config();
+const path = require("path");
 const { Sequelize, DataTypes } = require("sequelize");
 
 const sequelize = new Sequelize({
   dialect: process.env.DB_DIALECT,
-  storage: process.env.DB_STORAGE,
+  storage: path.join(__dirname, "..", "database.db"),
 });
 
 const UsersModel = sequelize.define(

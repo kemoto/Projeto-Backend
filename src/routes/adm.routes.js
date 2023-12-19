@@ -1,12 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const AdminController = require('../controllers/AdmController');
-const Auth = require('../utils/Auth');
+const { Router } = require("express");
+const AdmController = require("../controllers/AdmController");
 
-router.post('/criar-adm', Auth.validaAcesso, AdminController.criarAdministrador);
+const admController = new AdmController;
 
-router.delete('/:id', Auth.validaAcesso, AdminController.excluirUsuario);
+const admRouter = Router();
 
-router.put('/:id', Auth.validaAcesso, AdminController.alterarUsuario);
+admRouter.post("/", admController.createAdmin);
+admRouter.delete("/", admController.deleteUser);
 
-module.exports = router;
+module.exports = admRouter;

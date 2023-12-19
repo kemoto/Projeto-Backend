@@ -2,10 +2,6 @@ require("express-async-errors");
 const express = require("express");
 const AppError = require("./utils/AppError");
 const routes = require("./routes");
-const LoginRouter = require("./routes/login.routes");
-const adminRoutes = require("./routes/adm.routes");
-const Auth = require("./utils/Auth");
-const userRoutes = require("./routes/user.routes");
 
 const app = express();
 app.use(express.json());
