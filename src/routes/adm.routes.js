@@ -7,5 +7,6 @@ const admRouter = Router();
 
 admRouter.post("/", admController.createAdmin);
 admRouter.delete("/", admController.deleteUser);
+admRouter.put("/", admController.alteraSenha);
 
 module.exports = admRouter;

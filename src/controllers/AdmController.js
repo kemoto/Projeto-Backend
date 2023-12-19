@@ -58,15 +58,17 @@ class AdmController {
   async alteraSenha(req, res) {
     const { usuario, senha, novaSenha } = req.body;
 
-    const user = await UsersModel.findOne({where:{ usuario}});
+    const user = await UsersModel.findOne({ where: { usuario } });
 
-    const validaSenha = compare(senha, user.senha);
+    const validaSenha = await compare(senha, user.senha);
 
-    // if()
+    if (!validaSenha) {
+      throw new AppError("O login ou a senha não estão corretos.");
+    }
 
-    UsersModel.update()
+    UsersModel.update({ senha: novaSenha }, { where: usuario });
 
-    res.json();
+    res.json("Usuário atualizado com sucesso.");
   }
 }
 

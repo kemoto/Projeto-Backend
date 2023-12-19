@@ -51,6 +51,22 @@ class UserController {
       res.json({ logged: false }, "As credenciais não conferem.");
     }
   }
+
+  async alteraSenha(req, res) {
+    const { usuario, senha, novaSenha } = req.body;
+
+    const user = await UsersModel.findOne({ where: { usuario } });
+
+    const validaSenha = await compare(senha, user.senha);
+
+    if (!validaSenha) {
+      throw new AppError("O login ou a senha não estão corretos.");
+    }
+
+    UsersModel.update({ senha: novaSenha }, { where: usuario });
+
+    res.json("Usuário atualizado com sucesso.");
+  }
 }
 
 module.exports = UserController;
